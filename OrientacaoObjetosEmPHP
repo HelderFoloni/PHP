@@ -1,0 +1,45 @@
+<?php
+
+class Vendas{
+    private $data;
+    private $produto;
+    private $preco;
+    private $quantidade;
+    private $valorTotal;
+
+public function __construct($data, $produto, $preco, $quantidade, $valorTotal){
+    $this->data = $data;
+    $this->produto = $produto;
+    $this->preco = $preco;
+    $this->quantidade = $quantidade;
+    $this->valorTotal = $valorTotal;
+}
+
+ 
+
+public function obterValorTotal(){
+    $valorTotal = $this->preco * $this->quantidade;
+    return 'O valor total é: ' . $valorTotal;
+}
+
+public function vender(){
+    return "DATA: " . $this->data . " Produto: " . $this->produto . " Preço Unit.: " . $this->preco .
+            " Quantidade: " . $this->quantidade .  " TOTAL: " . $this->obterValorTotal();
+}
+
+}
+
+
+$vendaProduto1 = new Vendas(date("Y-m-d H:i:s"), 'Abacate', 5.00, 2, 0);  
+$vendaProduto2 = new Vendas(date("Y-m-d H:i:s"), 'Abacaxi', 3.00, 3, 0);
+$vendaProduto3 = new Vendas(date("Y-m-d H:i:s"), 'Rabanete', 2.00, 7, 0);
+
+
+echo $vendaProduto1->vender();
+echo PHP_EOL;
+
+echo $vendaProduto2->vender();
+echo PHP_EOL;
+
+echo $vendaProduto3->vender();
+echo PHP_EOL;
