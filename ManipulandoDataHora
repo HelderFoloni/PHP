@@ -1,0 +1,27 @@
+<?php
+
+class DataHora{
+    function principal(){
+        return date ("d/m/Y h:i:s");
+        
+    }
+    
+    function substract(){
+    $data = new DateTime();
+    $intervalo = new DateInterval('P5DT10H50M');
+    $data->sub($intervalo);
+    echo $data->format('d/m/Y h:i:s');
+}
+}
+
+echo PHP_EOL;
+
+$objDataHora = new DataHora;
+echo $objDataHora->principal();
+
+echo PHP_EOL;
+
+$objSub = new DataHora();
+echo $objSub->substract();
+
+?>
