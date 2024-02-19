@@ -125,3 +125,17 @@ switch ($_GET ['operacao']){
 }
 
 */
+
+/*
+
+CREATE DATABASE exemplo;
+
+USE exemplo;
+
+CREATE TABLE produto (
+    id INT,
+    descricao VARCHAR(255),
+    PRIMARY KEY (id)
+);
+
+*/
