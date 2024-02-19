@@ -1,0 +1,163 @@
+<?php
+
+declare(strict_types=1);
+
+class Posts
+{
+    /**
+     * @var PDO;
+     */
+    private $conexao;
+
+    public function __construct()
+    {
+        try {
+            // Inicializa a conexão com o banco de dados MySQL usando PDO
+            $this->conexao = new PDO('mysql:host=mysql;dbname=blog', 'root', '12345');
+        } catch (PDOException $e) {
+            // Em caso de erro na conexão, exibe a mensagem de erro e encerra o script
+            echo $e->getMessage();
+            die();
+        }
+    }
+
+    public function list(): array
+    {
+        // Query para selecionar todos os registros da tabela "blog"
+        $sql = 'select * from blog';
+        
+        $blog = [];
+        // Itera sobre o resultado da consulta e armazena os dados em um array
+        foreach ($this->conexao->query($sql) as $key => $value) {
+            array_push($blog, $value);
+        }
+        return $blog;   
+    }
+
+    public function insert(string $descricao): int
+    {
+        // Query para inserir um novo registro na tabela "blog"
+        $sql = 'insert into blog(descricao) values(?)';
+        
+        $prepare = $this->conexao->prepare($sql);
+        // Associa o parâmetro da descrição à consulta preparada
+        $prepare->bindParam(1, $descricao);
+        // Executa a consulta preparada
+        $prepare->execute();
+
+        // Retorna o número de linhas afetadas pela operação de inserção
+        return $prepare->rowCount();
+    }
+
+    public function update(string $descricao, int $id): int
+    {
+        // Query para atualizar um registro na tabela "blog" com base no ID
+        $sql = 'update blog set descricao = ? where id = ?';
+
+        $prepare = $this->conexao->prepare($sql);
+        // Associa os parâmetros da descrição e ID à consulta preparada
+        $prepare->bindParam(1, $descricao);
+        $prepare->bindParam(2, $id);
+        // Executa a consulta preparada
+        $prepare->execute();
+
+        // Retorna o número de linhas afetadas pela operação de atualização
+        return $prepare->rowCount();
+    }
+
+    public function delete(int $id): int
+    {
+        // Query para excluir um registro da tabela "blog" com base no ID
+        $sql = 'delete from blog where id = ?';
+
+        $prepare = $this->conexao->prepare($sql);
+        // Associa o parâmetro do ID à consulta preparada
+        $prepare->bindParam(1, $id);
+        // Executa a consulta preparada
+        $prepare->execute();
+
+        // Retorna o número de linhas afetadas pela operação de exclusão
+        return $prepare->rowCount();
+    }
+}
+
+/*
+
+<?php
+
+// Inclui o arquivo que contém a classe Blog
+require 'Blog.php';
+ 
+// Cria uma instância da classe Blog
+$posts = new Posts();
+
+// Verifica a operação desejada com base nos parâmetros da URL ($_GET)
+switch ($_GET['operacao']) {
+    
+    case 'list':
+        // Exibe um título para a lista de post
+        echo '<h3>Blogs: </h3>';
+        
+        // Itera sobre a lista de post e exibe detalhes de cada blog
+        foreach ($posts->list() as $value) {
+            echo 'Id: ' . $value['id'] . '<br> Descrição: ' . $value['descricao'] . '<br>';
+        }
+        break;
+
+    case 'insert':
+        // Tenta inserir um novo post no banco de dados
+        $status = $posts->insert("Blog teste numero um");
+        
+        // Verifica o status da operação de inserção
+        if (!$status) {
+            echo "Não foi possível executar a operação";
+            return false;
+        }
+
+        echo "Registro inserido com sucesso";
+
+        break;
+
+    case 'update':
+        // Tenta atualizar o conteúdo de um post no banco de dados
+        $status = $posts->update("Conteúdo do blog alterado", 2);
+        
+        // Verifica o status da operação de atualização
+        if (!$status) {
+            echo "Não foi possível executar a operação";
+            return false;
+        }
+
+        echo "Registro atualizado com sucesso";
+
+        break;
+
+    case 'delete':  
+        // Tenta excluir um blog do banco de dados com base no ID 3
+        $status = $posts->delete(3);
+
+        // Verifica o status da operação de exclusão
+        if (!$status) {
+            echo "Não foi possível executar a operação";
+            return false;
+        }
+
+        echo "Registro removido com sucesso";
+
+        break;
+}
+
+*/
+
+/*
+
+CREATE DATABASE exemplo;
+
+USE exemplo;
+
+CREATE TABLE blog (
+    id INT,
+    descricao VARCHAR(255),
+    PRIMARY KEY (id)
+);
+
