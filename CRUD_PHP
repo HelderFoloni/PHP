@@ -1,0 +1,127 @@
+Produto.php
+
+<?php
+
+declare(strict_types = 1);
+
+class Produto{
+    /**
+     * @var PDO
+     */
+    private $conexao;
+
+    public function __construct(){
+        try{
+            $this->conexao = new PDO('mysql:host=mysql;dbname=exemplo', 'root', '12345');
+        }catch(PDOException $e){
+            echo $e->getMessage();
+            die();
+        }
+}
+
+    public function list() : array
+    {
+        $sql = 'select * from produto';
+        
+        $produtos = [];
+        foreach ($this->conexao->query($sql) as $key => $value){
+            array_push($produtos, $value);
+            
+        }
+        return $produtos;   
+    }
+    public function insert(string $descricao) : int 
+    {
+        $sql = 'insert into produtos(descricao) values(?)';
+        
+        $prepare = $this->conexao-> prepare($sql);
+        $prepare->bindParam(1, $descricao);
+        $prepare->execute();
+
+        return $prepare->rowCount();
+        
+    }
+    public function update(string $descricao, int $id) : int
+    {
+        $sql = 'update produtos set descricao = ? where id = ?';
+
+        $prepare = $this->conexao->prepare($sql);
+
+        $prepare->bindParam(1, $descricao);
+        $prepare->bindParam(2, $id);
+
+        $prepare->execute();
+
+        return $prepare->rowCount();
+    }
+    public function delete(int $id) : int
+    {
+        $sql = 'delete from produtos where id = ?';
+
+        $prepare = $this->conexao->prepare($sql);   
+
+        $prepare->bindParam(1, $id);
+        $prepare->execute();
+
+        return $prepare->rowCount();
+    }
+}
+
+/*
+
+index.php
+
+<?php
+
+require 'Produto.php';
+ 
+$produto = new Produto();
+
+switch ($_GET ['operacao']){
+    
+    case 'list':
+        var_dump($produto->list()); 
+        echo '<h3>Produtos: </h3'>;
+        foreach ($produto->list() as  $value){
+
+            echo 'Id: ' . $value['id'] .'<br> Descricao: '. $value['descricao'] . '<br>';
+        }
+        break;
+
+    case 'insert':
+        echo $produto->insert('Produto teste do Helder 01');
+        if(!$status){
+            echo "Não foi possivel executar a operação";
+            return false;
+        }
+
+        echo "Registro inserido com sucesso";
+
+        break;
+
+    case 'update':
+        echo $produto->update('Produto alterado do Helder 04');
+        if(!$status){
+            echo "Não foi possivel executar a operação";
+            return false;
+        }
+
+        echo "Registro atualizado com sucesso";
+
+        break;
+
+    case 'delete':  
+
+        $status = $prodduto -> delete(3);
+
+        if(!$status){
+            echo "Não foi possivel executar a operação";
+            return false;
+        }
+
+        echo "Registro removido com sucesso";
+
+        break;
+}
+
+*/
